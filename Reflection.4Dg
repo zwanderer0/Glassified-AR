@@ -1,0 +1,216 @@
+#platform "GOLDELOX"
+
+// Program Skeleton 1.0 generated 6/13/2013 11:24:50 PM
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "VisualConst.inc"
+
+#inherit "ReflectionConst.inc"
+
+
+#CONST
+    RADIUS      4
+#END
+
+#constant BALLPOS       $ballPos[0], ballPos[1]
+
+#constant ERASEBALL     $preBallPos[0], preBallPos[1], RADIUS, BLACK
+#constant DRAWBALL      $ballPos[0], ballPos[1], RADIUS, color
+
+
+var color := RED;
+
+var lineCount := 0;
+var lineColor := WHITE;
+var lines[60];  // 15 * 4
+var preBallPos[2] := [0, 0];
+var ballPos[2];
+var dir[2];
+var animationFlag := FALSE;
+
+var directionPoints[4];
+
+
+func main()
+//  Uncomment the following if uSD images, fonts or strings used.
+/*
+    print("Starting\n") ;
+    while(!media_Init())
+        putstr("Drive not mounted...");
+        pause(200);
+        gfx_Cls();
+        pause(200);
+    wend
+*/
+
+
+        gfx_Cls();
+
+//gfx_Line(0, 0, 10, 10, RED);
+var combuf[20]; // a buffer for up ;to 20 characters
+//putstr("Default 115.2kb");
+com_Init(combuf, 20, 0); // initialize small circular queue of 50
+
+var char := -1;
+
+var count_2 := 0;
+
+var count_4 := 0;
+
+var state := -1;
+
+var oldTime := SYSTEM_TIMER_LO;
+var newTime;
+
+
+
+// bytes, no qualifier
+repeat
+
+    char := -1;
+    if(com_Count()) // if there is a character available
+        //serout(serin()); // echo it back to host
+        if(com_Count() > 10)
+            putstr("Buffer is about to overflow.");
+            putnum(DEC, com_Count());
+            putch('\n');
+        endif
+        char := serin();
+    endif
+
+
+    /* debug use */
+/*
+    count_4 := 3;
+    dir[0] := 34;
+    dir[1] := 23;
+    char := 0;
+    state := 2;
+    ballPos[0] := 4;
+    ballPos[1] := 14;
+*/
+    /* debug use */
+
+    if(char != -1)
+        oldTime := newTime;
+        if(state == -1 && char == 'l')
+            //putstr("l is received\n");
+            state++;
+        else if(state == 0)      //  reading lines
+            if(char == 'b' && count_4 == 0)
+                //putstr("b is received\n");
+                state++;
+            else
+                lines[lineCount * 4 + count_4] := char;
+                if(count_4 == 3)
+                    lineCount++;
+                endif
+                count_4 := (count_4 + 1) % 4;
+            endif
+        else if(state == 1) //  reading ball position
+            if(char == 'd' && count_2 == 0)
+                //putstr("d is received\n");
+                state++;
+            else
+                ballPos[count_2] := char;
+                count_2 := (count_2 + 1) % 2;
+            endif
+        else if(state == 2) //  reading direction
+            directionPoints[count_4] := char;
+
+                  //  test
+
+            if(count_4 == 3)
+
+/*
+                putstr("line pos: \n");
+                var k := 0;
+                repeat
+                    putnum(DEC, lines[k]);
+                    putch('\n');
+                    k++;
+                until(k == 4);
+
+                putnum(DEC, lineCount);
+                putch('\n');
+                putstr("ball pos: \n");
+                putnum(DEC, ballPos[0]);
+                putch(',');
+                putnum(DEC, ballPos[1]);
+                putstr("\ndirection: \n");
+                var i := 0;
+                repeat
+                    putnum(DEC, directionPoints[i]);
+                    putch('\n');
+                    i++;
+                until(i == 4);
+                putch('\n');
+
+*/
+                state++;
+                count_2 := 0;
+            endif
+
+            count_4 := (count_4 + 1) % 4;
+        else if(state == 3)                 //  animation
+            if(animationFlag)
+                if (count_2 == 0)
+                    gfx_CircleFilled(ERASEBALL);
+                    gfx_CircleFilled(DRAWBALL);
+                    //drawLines();
+                    preBallPos[0] := ballPos[0];
+                    preBallPos[1] := ballPos[1];
+                endif
+                if(char == 250)          //  collision
+                    changeColor();
+                else
+                    ballPos[count_2] := char;
+                    count_2 := (count_2 + 1) % 2;
+                endif
+            else if(char == 'a')
+                animationFlag := TRUE;
+            endif
+
+        endif
+    endif
+    newTime := SYSTEM_TIMER_LO;
+    //putnum(DEC, newTime - oldTime);
+
+
+
+forever
+endfunc
+
+func drawLines()
+    var i := 0;
+    repeat
+        gfx_Line(lines[i * 4 + 0], lines[i * 4 + 1], lines[i * 4 + 2], lines[i * 4 + 3], lineColor);
+        i++;
+    until(i == lineCount);
+    /*
+    putnum(DEC, ballPos[0] / MULTIPLIER);
+    putch('\n');
+    putnum(DEC, ballPos[1] / MULTIPLIER);
+    */
+endfunc
+
+func changeColor()
+    if(color == RED)
+        color := YELLOW;
+    else if(color == YELLOW)
+        color := GREEN;
+    else if(color == GREEN)
+        color := BLUE;
+    else if(color == BLUE)
+        color := CYAN;
+    else if(color == CYAN)
+        color := RED;
+    else if(color == RED)
+        color := PINK;
+    else if(color == PINK)
+        color := BROWN;
+    endif
+endfunc
+
+

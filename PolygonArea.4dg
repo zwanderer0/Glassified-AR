@@ -1,0 +1,84 @@
+#platform "GOLDELOX"
+
+#inherit "4DGL_16bitColours.fnc"
+
+var char;
+
+var lines[60];
+var lineColor := WHITE;
+var filledColor := GREEN;
+
+var state := 0;
+var numOfLines := 0;
+
+var count_4 := 0;
+
+
+func main()
+    gfx_ScreenMode(PORTRAIT) ; // change manually if orientation change
+
+    var combuf[20]; // a buffer for up ;to 20 characters
+    //putstr("Default 115.2kb");
+    com_Init(combuf, 20, 0); // initialize small circular queue of 50
+
+    //gfx_PenSize(SOLID);
+
+    //gfx_Rectangle(40, 40, 100, 100, RED);
+    //gfx_Triangle(0, 0, 40, 40, 20, 60, GREEN);
+
+    repeat
+
+    char := -1;
+    if(com_Count()) // if there is a character available
+        //serout(serin()); // echo it back to host
+        if(com_Count() > 10)
+            putstr("Buffer is about to overflow.");
+            putnum(DEC, com_Count());
+            putch('\n');
+        endif
+        char := serin();
+    endif
+
+    if(char != -1)
+        if(char == 0)
+            gfx_Cls();
+            state := 0;
+            numOfLines := 0;
+        else
+            if(state == 0)
+                if(char == 250)
+                    state++;
+                    drawLines();
+                    txt_MoveCursor(10, 5);
+                else
+                    lines[numOfLines * 4 + count_4] := char;
+                    count_4 := (count_4 + 1) % 4;
+                    if(count_4 == 0)
+                        numOfLines++;
+                    endif
+                endif
+            else if(state == 1)
+                putch(char);
+            endif
+        endif
+    endif
+
+    forever                     // this as well
+
+endfunc
+
+
+func drawLines()
+    var i := 0;
+    repeat
+        gfx_Line(lines[i * 4 + 0], lines[i * 4 + 1], lines[i * 4 + 2], lines[i * 4 + 3], lineColor);
+        i++;
+    until(i == numOfLines);
+    /*
+    putnum(DEC, ballPos[0] / MULTIPLIER);
+    putch('\n');
+    putnum(DEC, ballPos[1] / MULTIPLIER);
+    */
+endfunc
+
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="MFC_DEMO">
+</Property><Property Name="Solution File" Value="C:\Users\Leon\Desktop\MfcDemo\MFC_DEMO.sln">
+</Property><Property Name="Date" Value="Thursday, June 06, 2013">
+</Property><Property Name="Time" Value="13:10 PM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="MFC_DEMO.sln" Description="File successfully backed up as C:\Users\Leon\Desktop\MfcDemo\MFC_DEMO.sln.old">
+</Event><Event ErrorLevel="0" Project="MFC_DEMO" Source="MFC_DEMO.vcproj" Description="Converting project file 'C:\Users\Leon\Desktop\MfcDemo\MFC_DEMO.vcproj'.">
+</Event><Event ErrorLevel="1" Project="MFC_DEMO" Source="MFC_DEMO.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="MFC_DEMO" Source="MFC_DEMO.vcproj" Description="MSB8012: $(TargetPath) ('C:\Users\Leon\Desktop\MfcDemo\.\Release\MFC_DEMO.exe') does not match the Linker's OutputFile property value '.\Release/MFC_DEMO.exe' ('C:\Users\Leon\Desktop\MfcDemo\Release/MFC_DEMO.exe') in project configuration 'Release|Win32'. This may cause your project to build incorrectly. To correct this, please make sure that $(TargetPath) property value matches the value specified in %(Link.OutputFile).">
+</Event><Event ErrorLevel="1" Project="MFC_DEMO" Source="MFC_DEMO.vcproj" Description="MSB8012: $(TargetPath) ('C:\Users\Leon\Desktop\MfcDemo\.\Debug\MFC_DEMO.exe') does not match the Linker's OutputFile property value '.\Debug/MFC_DEMO.exe' ('C:\Users\Leon\Desktop\MfcDemo\Debug/MFC_DEMO.exe') in project configuration 'Debug|Win32'. This may cause your project to build incorrectly. To correct this, please make sure that $(TargetPath) property value matches the value specified in %(Link.OutputFile).">
+</Event><Event ErrorLevel="0" Project="MFC_DEMO" Source="MFC_DEMO.vcproj" Description="Done converting to new project file 'C:\Users\Leon\Desktop\MfcDemo\MFC_DEMO.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="MFC_DEMO" Source="MFC_DEMO.vcproj" Description="Converted">
+</Event><Event ErrorLevel="2" Project="" Source="MFC_DEMO.sln" Description="Solution file 'C:\Users\Leon\Desktop\MfcDemo\MFC_DEMO.sln' cannot be converted because it is read-only on disk. To convert the solution, change the permissions on the solution file to allow modification and re-open it.">
+</Event><Event ErrorLevel="3" Project="" Source="MFC_DEMO.sln" Description="Not Converted">
+</Event></UpgradeLog>

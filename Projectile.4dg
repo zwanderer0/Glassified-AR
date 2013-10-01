@@ -1,0 +1,148 @@
+#platform "GOLDELOX"
+
+#inherit "4DGL_16bitColours.fnc"
+
+
+#CONST
+    RADIUS      4
+#END
+
+#constant BALLPOS       $ballPos[0], ballPos[1]
+
+#constant ERASEBALL     $preBallPos[0], preBallPos[1], RADIUS, BLACK
+#constant DRAWBALL      $ballPos[0], ballPos[1], RADIUS, ballColor
+
+
+var ballColor := GREEN;
+
+
+
+var preBallPos[2] := [0, 0];
+var ballPos[2];
+
+var lines[60];
+var lineColor := WHITE;
+
+var state := 0;
+var numOfLines := 0;
+
+
+
+func main()
+
+    gfx_ScreenMode(LANDSCAPE) ;
+
+    // change manually if orientation change
+//  Uncomment the following if uSD images, fonts or strings used.
+/*
+    print("Starting\n") ;
+    while(!media_Init())
+        putstr("Drive not mounted...");
+        pause(200);
+        gfx_Cls();
+        pause(200);
+    wend
+*/
+
+
+        gfx_Cls();
+
+//gfx_Line(0, 0, 10, 10, RED);
+var combuf[20]; // a buffer for up ;to 20 characters
+//putstr("Default 115.2kb");
+com_Init(combuf, 20, 0); // initialize small circular queue of 50
+
+var char := -1;
+
+var count_2 := 0;
+
+var count_4 := 0;
+
+
+var animationJustStart := 1;
+
+
+
+// bytes, no qualifier
+repeat
+
+    char := -1;
+    if(com_Count()) // if there is a character available
+        //serout(serin()); // echo it back to host
+        if(com_Count() > 10)
+            putstr("Buffer is about to overflow.");
+            putnum(DEC, com_Count());
+            putch('\n');
+        endif
+        char := serin();
+    endif
+
+
+    /* debug use */
+/*
+    count_4 := 3;
+    dir[0] := 34;
+    dir[1] := 23;
+    char := 0;
+    state := 2;
+    ballPos[0] := 4;
+    ballPos[1] := 14;
+*/
+    /* debug use */
+
+    if(char != -1)
+        if(char == 0)
+            gfx_Cls();
+
+        else
+            if(state == 0)
+                if(char == 200)
+                    state++;
+                endif
+            else if(state == 1)
+                if(char == 201)
+                    state++;
+                else
+                    lines[numOfLines * 4 + count_4] := char;
+                    count_4 := (count_4 + 1) % 4;
+                    if(count_4 == 0)
+                        numOfLines++;
+                    endif
+                endif
+            else if(state == 2)
+                if(count_2 == 0)
+                    if(animationJustStart == 0)
+                        //drawLines();
+                        gfx_CircleFilled(ERASEBALL);
+                        gfx_CircleFilled(DRAWBALL);
+                        preBallPos[0] := ballPos[0];
+                        preBallPos[1] := ballPos[1];
+                    else
+                        animationJustStart := 0;
+                    endif
+                endif
+                ballPos[count_2] := char;
+                count_2 := (count_2 + 1) % 2;
+            endif
+        endif
+    endif
+
+
+
+forever
+endfunc
+
+
+func drawLines()
+    var i := 0;
+    repeat
+        gfx_Line(lines[i * 4 + 0], lines[i * 4 + 1], lines[i * 4 + 2], lines[i * 4 + 3], lineColor);
+        i++;
+    until(i == numOfLines);
+    /*
+    putnum(DEC, ballPos[0] / MULTIPLIER);
+    putch('\n');
+    putnum(DEC, ballPos[1] / MULTIPLIER);
+    */
+endfunc
+

@@ -1,0 +1,73 @@
+#platform "GOLDELOX"
+
+#inherit "4DGL_16bitColours.fnc"
+
+func main()
+/*
+    print("Starting\n") ;
+    while(!media_Init())
+        putstr("Drive not mounted...");
+        pause(200);
+        gfx_Cls();
+        pause(200);
+    wend
+*/
+
+
+
+        gfx_Cls();
+
+var combuf[50]; // a buffer for up ;to 20 characters
+//putstr("Default 115.2kb");
+com_Init(combuf, 50, 0); // initialize small circular queue of 50
+
+var char := -1;
+
+var count := 0;
+var p[4];
+
+
+
+// bytes, no qualifier
+repeat
+    char := -1;
+    if(com_Count()) // if there is a character available
+        //serout(serin()); // echo it back to host
+        if(com_Count() > 10)
+            putnum(DEC, com_Count());
+            putch('\n');
+        endif
+        char := serin();
+    endif
+
+
+
+    //gfx_Line(0, 0, 10, 10, 0xF800);
+    if(char != -1)
+        if(char == 0)
+            pause(8000);
+            gfx_Cls();
+        else
+            p[count] := char;
+            count++;
+            if (count == 4)  // draw
+                count := 0;
+                /*
+                putnum(DEC, p[0]);
+                putch(',');
+                putnum(DEC, p[1]);
+                putch(',');
+                putnum(DEC, p[2]);
+                putch(',');
+                putnum(DEC, p[3]);
+                putch('\n');
+                */
+                gfx_Line(p[0], p[1], p[2], p[3], RED);
+                pause(300);
+            endif
+        endif
+
+    endif
+
+forever
+endfunc

@@ -1,0 +1,87 @@
+#platform "GOLDELOX"
+
+// Program Skeleton 1.0 generated 6/11/2013 12:24:24 PM
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "VisualConst.inc"
+
+#inherit "math_landscapeConst.inc"
+
+func main()
+/*
+    print("Starting\n") ;
+    while(!media_Init())
+        putstr("Drive not mounted...");
+        pause(200);
+        gfx_Cls();
+        pause(200);
+    wend
+*/
+
+
+gfx_Set(SCREEN_MODE, LANDSCAPE);
+
+        gfx_Cls();
+
+var combuf[60]; // a buffer for up ;to 20 characters
+//putstr("Default 115.2kb");
+com_Init(combuf, 50, 0); // initialize small circular queue of 7
+
+var char := -1;
+
+var horizontalCount := 0;
+var verticalCount := 0;
+
+var width := 2;
+var height := 2;
+var max_char_w;
+var max_char_h;
+max_char_w := 18 / width;
+max_char_h := 18 / height;
+
+txt_Set(TEXT_WIDTH, width);
+txt_Set(TEXT_HEIGHT, height);
+
+
+
+// bytes, no qualifier
+repeat
+    char := -1;
+    if(com_Count()) // if there is a character available
+        //serout(serin()); // echo it back to host
+        char := serin();
+    endif
+
+
+    if(char != -1)
+        if(char == 0)   //  end of the message
+            pause(10000);
+            gfx_Cls();
+            txt_Set(TEXT_WIDTH, width);
+            txt_Set(TEXT_HEIGHT, height);
+
+
+            horizontalCount := 0;
+            verticalCount := 0;
+        else
+            txt_MoveCursor(verticalCount,horizontalCount);
+            horizontalCount++;
+            if(horizontalCount % max_char_w == 0)
+                horizontalCount := 0;
+                verticalCount++;
+            endif
+            putch(char);
+        endif
+    endif
+
+forever
+endfunc
+
+
+
+func reset()
+endfunc
+
+
+
